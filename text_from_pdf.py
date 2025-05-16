@@ -26,6 +26,18 @@ def text_extraction(element):
     format_per_line = list(set(line_formats))
     # Возвращаем кортеж с текстом в каждой строке вместе с его форматом
     return line_text, format_per_line
+    
+def clear_text(page_content):
+    text1 = ""
+    text2 = ""
+    for text in page_content:
+        split_text1 = text.split("-\n")
+        clean_text1 = "".join(split_text1)
+        text1 += clean_text1
+    split_text2 = text1.split("\n")
+    clean_text2 = "".join(split_text2)
+    text2 += clean_text2
+    return text2
 
 def get_text(file_path):
     page_content = []
@@ -38,34 +50,11 @@ def get_text(file_path):
             if isinstance(element, LTTextContainer):
                 # Используем функцию извлечения текста и формата для каждого текстового элемента
                 (line_text, format_per_line) = text_extraction(element)
-                #print(line_text, format_per_line)
+                # Отбираем текст только опредленного формата
                 if (10.019999999999982 in format_per_line or 10.980000000000018 in format_per_line) and len(line_text.split()) > 3:
+                    # удаляем ссылки [] из текста
                     line_text = re.sub(r'\[.*?\]', '', line_text)
                     page_content.append(line_text)
                 if "Список литературы" in line_text:
-                    text1 = ""
-                    text2 = ""
-                    for text in page_content:
-                        split_text1 = text.split("-\n")
-                        clean_text1 = "".join(split_text1)
-                        text1 += clean_text1
-                    split_text2 = text1.split("\n")
-                    clean_text2 = "".join(split_text2)
-                    text2 += clean_text2
-                    return text2
+                    return clear_text(page_content)
     return page_content
-
-#os.makedirs("C:\project2025\ScientificStyle\Texts")
-
-def list_of_texts(path):
-    file_list = os.listdir(path)[:4]
-    #print(file_list)
-    for num, file in enumerate(file_list):
-        folder_path = "C:\project2025\ScientificStyle\Texts"
-        file_path = os.path.join(folder_path, "scientific " + str(num) + ".txt")
-        with open(file_path, "w", encoding='utf-8') as f:
-            with open('C:\project2025\ScientificStyle\Articles/' + file, 'rb') as x:
-                a = get_text(x)
-                f.write(a)
-
-list_of_texts("C:\project2025\ScientificStyle\Articles")
