@@ -57,4 +57,4 @@ def get_text(file_path):
                     page_content.append(line_text)
                 if "Список литературы" in line_text:
                     return clear_text(page_content)
-    return page_content
+    return clear_text(page_content)
